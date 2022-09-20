@@ -8,4 +8,12 @@
 - Activate virtual environment by running "source env/bin/activate"
 - run "pip3 install -r requirements.txt"
 
+# React configuration
+- cd frontend
+- npm install
+- npm run build
+
+Finally cd to root directory then run:
+python3 manage.py runserver
+
 YOU ARE ALL SET
