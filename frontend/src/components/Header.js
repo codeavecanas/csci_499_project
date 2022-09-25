@@ -1,48 +1,40 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
+import "../styles/Header.css"
 
 const Header = () => {
     return (
-        <div className='navbar'>
-            <ul className='nav-left'>
+        <div className='header'>
+            <Link to='/'>
+                <div className='logo'>
+                    <ul>
+                        <li className='nav-item'>
+                        </li>
+                    </ul>
+                </div>
+            </Link>
+            <ul className='navbar'>
                 <li className='nav-item'>
-                    <Link to='/about'>
-                        About
+                    <Link to='/search-cars' className='link'>
+                        SEARCH CARS
                     </Link>
                 </li>
                 <li className='nav-item'>
-                    <Link to='/shop'>
-                        Shop
+                    <Link to='/how-it-works' className='link'>
+                        HOW IT WORKS
                     </Link>
                 </li>
                 <li className='nav-item'>
-                    <Link to='/treatments'>
-                        Treatment
-                    </Link>
-                </li>
-            </ul>
-            <ul className='nav-center'>
-                <li className='nav-item'>
-                    <Link to='/'>
-                        LAVINA ESTHETICS
-                    </Link>
-                </li>
-            </ul>
-            <ul className='nav-right'>
-                <li className='nav-item'>
-                    <Link to='/'>
-                        Book
+                    <Link to='/how-it-works' className='link'>
+                        RIGHT CAR FOR YOU?
                     </Link>
                 </li>
                 <li className='nav-item'>
-                    <Link to='/contact'>
-                        Contact
+                    <Link to='/login' className='link'>
+                        LOGIN
                     </Link>
                 </li>
-                <li className='nav-item'>
-                    <Link to='/signup'>
-                        <UserProfile/>
-                    </Link>
-                </li>
+
             </ul>
         </div>
     );
