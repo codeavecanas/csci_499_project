@@ -9,11 +9,16 @@
 
 .banner-text {
     height: 0px;
-    background-color: aliceblue;
     width: 30%;
     display: flex;
-    margin: 200px 200px 400px ;
+    margin: 200px 200px;
     font-size: 40px;
     color: white;
     font-weight: 1000;
+}
+
+.search-bar {
+    height: 40px;
+    margin-top: 200px;
+    display: flex;
 }
