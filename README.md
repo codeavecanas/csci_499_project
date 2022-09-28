@@ -16,4 +16,9 @@
 Finally cd to root directory then run:
 python3 manage.py runserver
 
+# log into django admin
+- python3 manage.py createsuperuser
+- python3 manage.py runserver
+- got to http://127.0.0.1:8000/admin
+
 YOU ARE ALL SET
