@@ -1,0 +1,24 @@
+.home-page-body {
+    display: flex;
+    height: 1000px;
+    width: 100%;
+    background-image: url("../images/homepage.jpg");
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+.banner-text {
+    height: 0px;
+    width: 30%;
+    display: flex;
+    margin: 200px 200px;
+    font-size: 40px;
+    color: white;
+    font-weight: 1000;
+}
+
+.search-bar {
+    height: 40px;
+    margin-top: 200px;
+    display: flex;
+}
