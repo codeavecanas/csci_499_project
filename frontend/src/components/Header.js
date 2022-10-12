@@ -1,8 +1,27 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import "../styles/Header.css"
 
+import { useDispatch, useSelector } from 'react-redux'
+import { Container, Nav, Navbar, NavDropdown } from 'react-bootstrap';
+import { LinkContainer } from 'react-router-bootstrap';
+// import { FaShoppingCart, FaUserTie } from 'react-icons/fa';
+import { logout } from '../actions/userActions'
+
 const Header = () => {
+
+    const history = useNavigate()
+    const userLogin = useSelector(state => state.userLogin)
+    const { userInfo } = userLogin
+
+    const dispatch = useDispatch()
+
+    const logoutHandler = () => {
+        dispatch(logout())
+        history('/login')
+    }
+
+
     return (
         <div className='header'>
             <Link to='/'>
@@ -29,11 +48,17 @@ const Header = () => {
                         RIGHT CAR FOR YOU?
                     </Link>
                 </li>
-                <li className='nav-item'>
+                
+                {userInfo ? (<li className='nav-item'>
+                    <Link to='/logout' className='link' onClick={()=>logoutHandler()}> 
+                        LOGOUT
+                    </Link>
+                </li>):( <li className='nav-item'>
                     <Link to='/login' className='link'>
                         LOGIN
                     </Link>
-                </li>
+                </li>)}
+               
 
             </ul>
         </div>
