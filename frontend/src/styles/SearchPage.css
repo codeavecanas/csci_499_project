@@ -1,0 +1,6 @@
+.primary-search-container {
+    height: 100px;
+    background-color: lightgray;
+    padding: 100px;
+    display: flex;
+}

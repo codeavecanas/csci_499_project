@@ -3,7 +3,7 @@ import HomePageBody from './HomePageBody';
 
 const HomePage = () => {
     return (
-        <div className='home-page'>
+        <div>
             <HomePageBody />
         </div>
     );

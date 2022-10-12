@@ -1,0 +1,5 @@
+.selection-area {
+    background-color: whitesmoke;
+    display: flex;
+    padding: 100px;
+}
