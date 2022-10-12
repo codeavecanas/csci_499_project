@@ -11,6 +11,5 @@ urlpatterns = [
 
     path('<str:pk>/', getUserById, name='user'),
 
-    path('update/<str:pk>/', updateUser, name='user-update'),
 
 ]
