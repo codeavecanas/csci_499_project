@@ -4,7 +4,7 @@ import pandas as pd
 
 
 def cars_com_scrape():
-    carnumber = []
+
     carname = []
     caryear = []
     carprice = []
@@ -20,7 +20,7 @@ def cars_com_scrape():
     
     for makes in car_make_info[6:36]:
 
-        carmake.append(makes.text.strip())
+        
         url = f"https://www.cars.com/shopping/results/?list_price_max=&makes[]={makes.text.strip().lower()}&maximum_distance=20&models[]=&page=1&page_size=100&stock_type=all"
         #url = f"https://www.cars.com/shopping/results/?list_price_max=&makes[]=tesla&maximum_distance=20&models[]=&page=1&page_size=100&stock_type=all"
         
@@ -46,7 +46,8 @@ def cars_com_scrape():
             
             for car in car_info:
             
-            
+                carmake.append(makes.text.strip())
+                
                 name = car.find('a', class_="vehicle-card-link js-gallery-click-link")
                 carname.append(name.text.strip()[5:])
         
@@ -96,8 +97,8 @@ def cars_com_scrape():
             
         
 
-        dfzip = list(zip(carnumber,carmake,carname,caryear,carprice,carengine,carmiles,carlink,carpic))
-        cardata = pd.DataFrame(dfzip, columns = ['number','carmake','name','year','price','engine','miles','link','image'])
+        dfzip = list(zip(carmake,carname,caryear,carprice,carengine,carmiles,carlink,carpic))
+        cardata = pd.DataFrame(dfzip, columns = ['carmake','name','year','price','engine','miles','link','image'])
 
         cardata.to_csv('testcardata.csv', index=False)
         return cardata
@@ -172,9 +173,9 @@ def autotrader_scrape():
             print(pic['src'])
             print(engine)
 
-    dfzip = list(zip(carnumber,carmake,carname,caryear,carprice,carengine,carmiles,carlink,carpic))
-    cardata = pd.DataFrame(dfzip, columns = ['number','carmake','name','year','price','engine','miles','link','image'])
+    dfzip = list(zip(carname,caryear,carprice,carengine,carmiles,carlink,carpic))
+    cardata = pd.DataFrame(dfzip, columns = ['name','year','price','engine','miles','link','image'])
     cardata.to_csv('testcardata.csv', index=False)
     return cardata
 
-test = autotrader_scrape()
+test = cars_com_scrape()
