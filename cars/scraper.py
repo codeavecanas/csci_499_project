@@ -1,10 +1,13 @@
 from bs4 import BeautifulSoup
 import requests
 import pandas as pd
+from models import Car
+import os
+
+os.environ['DJANGO_SETTINGS_MODULE'] = 'config.settings'
 
 
 def cars_com_scrape():
-    carnumber = []
     carname = []
     caryear = []
     carprice = []
@@ -19,8 +22,10 @@ def cars_com_scrape():
     car_make_info = soup.find_all('option')
     
     for makes in car_make_info[6:36]:
+        
+        make = makes.text.strip()
+        carmake.append(make)
 
-        carmake.append(makes.text.strip())
         url = f"https://www.cars.com/shopping/results/?list_price_max=&makes[]={makes.text.strip().lower()}&maximum_distance=20&models[]=&page=1&page_size=100&stock_type=all"
         #url = f"https://www.cars.com/shopping/results/?list_price_max=&makes[]=tesla&maximum_distance=20&models[]=&page=1&page_size=100&stock_type=all"
         
@@ -30,7 +35,7 @@ def cars_com_scrape():
         #print(car_info)
         #print(url)
 
-        pagenum = 2
+        pagenum = 1
     
     
         for page in range(pagenum):
@@ -48,13 +53,16 @@ def cars_com_scrape():
             
             
                 name = car.find('a', class_="vehicle-card-link js-gallery-click-link")
-                carname.append(name.text.strip()[5:])
-        
-                caryear.append(name.text.strip()[:4])
+                name = name.text.strip()[5:]
+                carname.append(name)
+
+                year = name.text.strip()[:4]
+                caryear.append(year)
         
                 price = car.find('span', class_="primary-price")
-                carprice.append(price.text.strip()[1:].replace(',',''))
-            
+                price = price.text.strip()[1:].replace(',','')
+                carprice.append(price)
+
                 link = 'https://www.cars.com' + name['href']
                 carlink.append(link)
         
@@ -66,21 +74,27 @@ def cars_com_scrape():
                 if soup2.find_all("dd")[3].text.strip() == "Electric":
                     
                     mileage = soup2.find_all("dd")[8]
-                    carmiles.append(mileage.text.strip()[:-4].replace(',',''))
+                    mileage = mileage.text.strip()[:-4].replace(',','')
+                    carmiles.append(mileage)
                     
-                    carengine.append(soup2.find_all("dd")[3].text.strip())
+                    engine = soup2.find_all("dd")[3].text.strip()
+                    carengine.append(engine)
+
                 #IF NOT EV
                 else:
             
                     mileage = soup2.find_all("dd")[9]
-                    carmiles.append(mileage.text.strip()[:-4].replace(',',''))
-        
-                    carengine.append(soup2.find_all("dd")[6].text.strip())
+                    mileage = mileage.text.strip()[:-4].replace(',','')
+                    carmiles.append(mileage)
+
+                    engine = soup2.find_all("dd")[6].text.strip()
+                    carengine.append(engine)
         
                 pic = soup2.find('img', class_="swipe-main-image image-index-0")
-                carpic.append(pic['src'])
+                pic = pic['src']
+                carpic.append(pic)
         
-        
+                #Prints for testing
                 print(name.text.strip()[5:])
                 print(name.text.strip()[:4])
                 print(price.text.strip()[1:].replace(',',''))
@@ -89,6 +103,19 @@ def cars_com_scrape():
                 print(link)
                 print(pic['src'])
                 #print(pic)
+                
+                #Adding to database
+                newentry = Car(
+                    name = carname,
+                    make = carmake,
+                    year = caryear,
+                    price = carprice,
+                    miles = carmiles,
+                    engine = carengine,
+                    link = carlink,
+                    image = carpic
+                )
+                newentry.save()
         
             website = requests.get(url)
             soup = BeautifulSoup(website.content, "html.parser")
@@ -96,14 +123,14 @@ def cars_com_scrape():
             
         
 
-        dfzip = list(zip(carnumber,carmake,carname,caryear,carprice,carengine,carmiles,carlink,carpic))
+        dfzip = list(zip(carmake,carname,caryear,carprice,carengine,carmiles,carlink,carpic))
         cardata = pd.DataFrame(dfzip, columns = ['number','carmake','name','year','price','engine','miles','link','image'])
 
         cardata.to_csv('testcardata.csv', index=False)
         return cardata
 
 
-def autotrader_scrape():
+def autotrader_scrape(): #ran into an error doesn't work for now
     carname = []
     caryear = []
     carprice = []
@@ -172,9 +199,9 @@ def autotrader_scrape():
             print(pic['src'])
             print(engine)
 
-    dfzip = list(zip(carnumber,carmake,carname,caryear,carprice,carengine,carmiles,carlink,carpic))
-    cardata = pd.DataFrame(dfzip, columns = ['number','carmake','name','year','price','engine','miles','link','image'])
+    dfzip = list(zip(carname,caryear,carprice,carengine,carmiles,carlink,carpic))
+    cardata = pd.DataFrame(dfzip, columns = ['name','year','price','engine','miles','link','image'])
     cardata.to_csv('testcardata.csv', index=False)
     return cardata
 
-test = autotrader_scrape()
+test = cars_com_scrape()
