@@ -108,6 +108,7 @@ def cars_com_scrape():
             website = requests.get(url)
             soup = BeautifulSoup(website.content, "html.parser")
             car_info = soup.find_all('div', class_="vehicle-card-main js-gallery-click-card")
+
             
         
 
@@ -115,6 +116,7 @@ def cars_com_scrape():
     cardata = pd.DataFrame(dfzip, columns = ['carmake','name','year','price','engine','miles','link','image'])
 
     cardata.to_csv('testcardata.csv', index=False)
+    cardata.to_json('testcardata.json', indent=4, orient="split")
     return cardata
 
 
