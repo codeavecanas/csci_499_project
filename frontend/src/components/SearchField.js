@@ -3,7 +3,8 @@ import "../styles/SearchField.css";
 
 import TextField from '@mui/material/TextField';
 import MenuItem from '@mui/material/MenuItem';
-
+import Slider from '@mui/material/Slider';
+import Box from '@mui/material/Box';
 
 const carMakes = [
     {
@@ -46,6 +47,28 @@ const carMiles = [
     },
 ];
 
+const carYears = [
+    {
+      value: '2020',
+      label: '2020',
+    },
+    {
+      value: '2021',
+      label: '2021',
+    },
+    {
+      value: '2022',
+      label: '2022',
+    },
+];
+
+const carPrices= [
+    {
+        value: '100',
+        label: '100'
+    },
+];
+
 
 function SearchField() {
 
@@ -53,6 +76,9 @@ function SearchField() {
     const [carMake, setCarMake] = useState('');
     const [carModel, setCarModel] = useState('');
     const [carMile, setCarMiles] = useState('');
+    const [carYear, setCarYear] = useState('');
+    const [carPrice, setCarPrice] = useState('');
+    const [priceSlider, setPriceSlider] = useState([0, 100]);
 
 
     // Change state of carMake
@@ -70,19 +96,33 @@ function SearchField() {
         setCarMiles(event.target.value);
     };
 
+    // Change state of carYear
+    const handleYearChange = (event) => {
+        setCarYear(event.target.value);
+    };
 
+    // Change state of carYear
+    const handlePriceChange = (event) => {
+        setCarPrice(event.target.value);
+    };
+
+    // Change state of carYear
+    const handlePriceSliderChange = (event) => {
+        setPriceSlider(event.target.value);
+    };
 
     return (
         <div className="selection-area">
-            <div>
+            <div className="selectors">
                 {/*Make of car selection*/}
                 <TextField
-                    id="make"
+                    id="make"  
                     select
                     label="Make"
                     value={carMake}
                     onChange={handleMakeChange}
-                    helperText="Car manufacturer"
+                    helperText="Manufacturer"
+                    prop sx={{width: 120}}
                 >
                     {carMakes.map((option) => (
                         <MenuItem key={option.value} value={option.value}>
@@ -90,41 +130,84 @@ function SearchField() {
                         </MenuItem>
                     ))}
                 </TextField>
+
+                {/*Model of car selection*/}
+                <TextField
+                    id="model"
+                    select
+                    label="Model"
+                    value={carModel}
+                    onChange={handleModelChange}
+                    helperText="Car model"
+                    prop sx={{width: 100}}
+                >
+                    {carModels.map((option) => (
+                        <MenuItem key={option.value} value={option.value}>
+                            {option.label}
+                        </MenuItem>
+                    ))}
+                </TextField>
+
+                {/*Miles of car selection*/}
+                <TextField
+                    id="miles"
+                    select
+                    label="Miles"
+                    value={carMile}
+                    onChange={handleMilesChange}
+                    helperText="Miles"
+                    prop sx={{width: 100}}
+                >
+                    {carMiles.map((option) => (
+                        <MenuItem key={option.value} value={option.value}>
+                            {option.label}
+                        </MenuItem>
+                    ))}
+                </TextField>
+
+                {/*Year of car selection*/}
+                <TextField
+                    id="year"
+                    select
+                    label="Year"
+                    value={carYear}
+                    onChange={handleYearChange}
+                    helperText="Year"
+                    prop sx={{width: 100}}
+                >
+                    {carYears.map((option) => (
+                        <MenuItem key={option.value} value={option.value}>
+                            {option.label}
+                        </MenuItem>
+                    ))}
+                </TextField>
+
+                {/*Price of car selection*/}
+                <TextField
+                    id="price"
+                    select
+                    label="Price"
+                    value={carPrice}
+                    onChange={handlePriceChange}
+                    helperText="Price"
+                    prop sx={{width: 100}}
+                >
+                    {/*PRICE SLIDER*/}
+                    <div className="slider-container">
+                        <h4 id='h4'>PRICE RANGE</h4>
+                        <div className='priceInputField'>
+                            <input className='minPrice' type="text" placeholder="$0"></input>
+                            <input className='maxPrice' type="text" placeholder="$100,000"></input>
+                        </div>
+                        <div className='slider'>
+                            <Slider
+                                size="small"
+                                defaultValue={0}
+                            />
+                        </div>
+                    </div>
+                </TextField>
             </div>
-
-            {/*Model of car selection*/}
-            <TextField
-                className="model-selection"
-                select
-                label="Model"
-                value={carModel}
-                onChange={handleModelChange}
-                helperText="Car model"
-            >
-                {carModels.map((option) => (
-                    <MenuItem key={option.value} value={option.value}>
-                        {option.label}
-                    </MenuItem>
-                ))}
-            </TextField>
-
-            {/*Miles of car selection*/}
-            <TextField
-                id="miles"
-                select
-                label="Miles"
-                value={carMile}
-                onChange={handleMilesChange}
-                helperText="Miles of car"
-            >
-                {carMiles.map((option) => (
-                    <MenuItem key={option.value} value={option.value}>
-                        {option.label}
-                    </MenuItem>
-                ))}
-            </TextField>
-
-
         </div>
     );
 };

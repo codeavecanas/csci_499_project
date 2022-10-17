@@ -1,6 +1,8 @@
 .primary-search-container {
     height: 100px;
-    background-color: lightgray;
-    padding: 100px;
     display: flex;
+    background-color: whitesmoke;
+    padding: 50px;
+    border: 4px solid midnightblue;
+    border-radius: 5px;
 }
