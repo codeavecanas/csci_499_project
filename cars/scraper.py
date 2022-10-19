@@ -4,7 +4,7 @@ import pandas as pd
 
 
 def cars_com_scrape():
-    carnumber = []
+
     carname = []
     caryear = []
     carprice = []
@@ -17,10 +17,10 @@ def cars_com_scrape():
     page = requests.get("https://www.cars.com")
     soup = BeautifulSoup(page.content, "html.parser")
     car_make_info = soup.find_all('option')
+    car_make_info = car_make_info[6:36]
     
-    for makes in car_make_info[6:36]:
-
-        carmake.append(makes.text.strip())
+    for makes in car_make_info:
+        
         url = f"https://www.cars.com/shopping/results/?list_price_max=&makes[]={makes.text.strip().lower()}&maximum_distance=20&models[]=&page=1&page_size=100&stock_type=all"
         #url = f"https://www.cars.com/shopping/results/?list_price_max=&makes[]=tesla&maximum_distance=20&models[]=&page=1&page_size=100&stock_type=all"
         
@@ -30,7 +30,7 @@ def cars_com_scrape():
         #print(car_info)
         #print(url)
 
-        pagenum = 2
+        pagenum = 1
     
     
         for page in range(pagenum):
@@ -46,7 +46,8 @@ def cars_com_scrape():
             
             for car in car_info:
             
-            
+                carmake.append(makes.text.strip())
+                
                 name = car.find('a', class_="vehicle-card-link js-gallery-click-link")
                 carname.append(name.text.strip()[5:])
         
@@ -57,7 +58,8 @@ def cars_com_scrape():
             
                 link = 'https://www.cars.com' + name['href']
                 carlink.append(link)
-        
+                
+                print(link)
                 #Goes into car page
                 carpage = requests.get(link)
                 soup2 = BeautifulSoup(carpage.content, "html.parser")
@@ -66,6 +68,10 @@ def cars_com_scrape():
                 if soup2.find_all("dd")[3].text.strip() == "Electric":
                     
                     mileage = soup2.find_all("dd")[8]
+                    
+                    if mileage == "" or mileage == None:
+                        carmiles.append("-")
+                        
                     carmiles.append(mileage.text.strip()[:-4].replace(',',''))
                     
                     carengine.append(soup2.find_all("dd")[3].text.strip())
@@ -73,12 +79,20 @@ def cars_com_scrape():
                 else:
             
                     mileage = soup2.find_all("dd")[9]
+                
+                    if mileage == "" or mileage == None:
+                        carmiles.append("-")
+                        
                     carmiles.append(mileage.text.strip()[:-4].replace(',',''))
         
                     carengine.append(soup2.find_all("dd")[6].text.strip())
         
                 pic = soup2.find('img', class_="swipe-main-image image-index-0")
-                carpic.append(pic['src'])
+                
+                if pic == None:
+                    carpic.append('N/A')
+                else:
+                    carpic.append(pic['src'])
         
         
                 print(name.text.strip()[5:])
@@ -86,21 +100,98 @@ def cars_com_scrape():
                 print(price.text.strip()[1:].replace(',',''))
                 print(mileage.text.strip()[:-4].replace(',',''))
                 print(soup2.find_all("dd")[6].text.strip())
-                print(link)
-                print(pic['src'])
+                #print(link)
+                #print(pic['src'])
                 #print(pic)
+
         
             website = requests.get(url)
             soup = BeautifulSoup(website.content, "html.parser")
             car_info = soup.find_all('div', class_="vehicle-card-main js-gallery-click-card")
+
             
         
 
-        dfzip = list(zip(carnumber,carmake,carname,caryear,carprice,carengine,carmiles,carlink,carpic))
-        cardata = pd.DataFrame(dfzip, columns = ['number','carmake','name','year','price','engine','miles','link','image'])
+    dfzip = list(zip(carmake,carname,caryear,carprice,carengine,carmiles,carlink,carpic))
+    cardata = pd.DataFrame(dfzip, columns = ['carmake','name','year','price','engine','miles','link','image'])
 
-        cardata.to_csv('testcardata.csv', index=False)
-        return cardata
+    cardata.to_csv('testcardata.csv', index=False)
+    cardata.to_json('testcardata.json', indent=4, orient="split")
+    return cardata
 
+
+def autotrader_scrape():
+    carname = []
+    caryear = []
+    carprice = []
+    carlink = []
+    carmiles = []
+    carpic = []
+    carengine = []
+    
+    pagenum = 4
+    
+    headers = {
+    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101 Firefox/102.0',
+    'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8',
+    'Accept-Language': 'en-US,en;q=0.5',
+    'Accept-Encoding': 'gzip, deflate, br',
+    'Connection':'keep-alive'
+    }
+    
+    for page in range(pagenum):
+        page += 1
+        print(page)
+        
+        url = 'https://www.autotrader.com/cars-for-sale/all-cars/brooklyn-ny-11201?dma=&searchRadius=25&isNewSearch=false&marketExtension=include&showAccelerateBanner=false&sortBy=relevance&numRecords=100'
+
+        if page != 1:
+            url = 'https://www.autotrader.com/cars-for-sale/all-cars/brooklyn-ny-11201?dma=&searchRadius=25&isNewSearch=false&marketExtension=include&showAccelerateBanner=false&sortBy=relevance&numRecords=100' + f'&firstRecord={(page - 1)*100}'
+    
+        page = requests.get(url, headers = headers)
+        soup = BeautifulSoup(page.content, "html.parser")
+        car_info = soup.find_all('div', class_="item-card row display-flex align-items-stretch")
+    
+        for car in car_info:
+
+            name = car.find('h2').text.strip().split(" ")[1:]
+            name = " ".join(name)
+            carname.append(name)
+        
+            caryear.append(name[0:4])
+                
+            #go into car details
+            link = 'https://www.autotrader.com' + car.find('a', rel="nofollow")['href']
+            carlink.append(link)
+        
+            page = requests.get(link, headers=headers)
+            soup2 = BeautifulSoup(page.content, "html.parser")
+            pic = soup2.find('img',class_='carousel-image css-1tknha6-StyledImage e1nnhggb0')
+        
+            carpic.append(pic['src'])
+        
+            price = soup2.find('span',class_='first-price first-price-lg text-size-700').text.strip()
+            price = price.replace(',','').replace('$','')
+            carprice.append(price)
+        
+            engine = soup2.find('div',class_='col-xs-10 margin-bottom-0').text.strip()
+            carengine.append(engine)
+        
+            miles = soup2.find('div',class_='col-xs-10 margin-bottom-0').text.strip()
+            miles = miles[:-6].replace(',','')
+            carmiles.append(miles)
+        
+            print(name)
+            print(name[0:4])
+            print(price)
+            print(link)
+            print(miles[:-6].replace(',',''))
+            print(pic['src'])
+            print(engine)
+
+    dfzip = list(zip(carname,caryear,carprice,carengine,carmiles,carlink,carpic))
+    cardata = pd.DataFrame(dfzip, columns = ['name','year','price','engine','miles','link','image'])
+    cardata.to_csv('testcardata.csv', index=False)
+    return cardata
 
 test = cars_com_scrape()
