@@ -8,9 +8,8 @@ const HomePageBody = () => {
                 EASIEST WAY TO FIND YOUR NEXT CAR
             </div>
             <div className='search-bar'>
-                <input type="text" placeholder="Search.."></input>
+                <input type="text" placeholder="Search..."></input>
             </div>
-
         </div>
     );
 };
