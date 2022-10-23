@@ -11,7 +11,7 @@ import Typography from '@mui/material/Typography';
 const SearchResultCard = () => {
     const data = require('/Users/Ivan/Desktop/car_4_u/frontend/src/components/cardata.json')
     const array = data.data;
-    /*console.log(array);*/
+
     return (
         <div className='card-container'>
             {data.data.map((option) => (
@@ -22,18 +22,17 @@ const SearchResultCard = () => {
                         height="140"
                         image={option.image}
                     />
-                    <CardContent>
-                        <Typography gutterBottom variant="h4" component="div">
-                            {option.carmake} {option.name}
+                    <CardContent className='card-content'>
+                        <Typography className='card-title' variant="h4">
+                            {option.name}
                         </Typography>
-                        <Typography variant="h5" color="text.secondary">
-                            ${option.price}
+                        <Typography className='card-info' variant="h5" color="text.secondary">
+                            Price: ${option.price}
                         </Typography>
                     </CardContent>
-                    <CardActions>
-                        <Button size="small">Share</Button>
+                    <CardActions className='actions'>
                         <a href={option.link}>
-                        <Button size="small">Learn More</Button>
+                            <Button size="small">Go to site</Button>
                         </a>
                     </CardActions>
                 </Card>
