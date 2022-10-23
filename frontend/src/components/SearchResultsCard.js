@@ -9,7 +9,7 @@ import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 
 const SearchResultCard = () => {
-    const data = require('/Users/Ivan/Desktop/CSCI 49900/csci_499_project/frontend/src/components/cardata.json')
+    const data = require('/Users/Ivan/Desktop/car_4_u/frontend/src/components/cardata.json')
     const array = data.data;
     /*console.log(array);*/
     return (
