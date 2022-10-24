@@ -202,7 +202,7 @@ def autotrader_scrape():
 
             image = pic['src']
             carpic.append(image)
-        
+
             price = soup2.find('span',class_='first-price first-price-lg text-size-700').text.strip()
             price = price.replace(',','').replace('$','')
             carprice.append(price)
