@@ -30,7 +30,7 @@ const Header = () => {
                     </Link>
                 </li>
                 
-                <li className='nav-item'>
+                {/*<li className='nav-item'>
                     <Link to='/logout' className='link'> 
                         LOGOUT
                     </Link>
@@ -39,7 +39,7 @@ const Header = () => {
                     <Link to='/login' className='link'>
                         LOGIN
                     </Link>
-                </li>
+                </li>*/}
             </ul>
         </div>
     );
