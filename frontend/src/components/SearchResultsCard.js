@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import '../styles/SearchResultsCard.css';
 
 import Card from '@mui/material/Card';
@@ -7,39 +7,50 @@ import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
+import CardActionArea from '@mui/material/CardActionArea';
 
-const SearchResultCard = () => {
-    const data = require('/Users/Ivan/Desktop/CSCI 49900/csci_499_project/frontend/src/components/cardata.json')
-    const array = data.data;
-    /*console.log(array);*/
+import { Link } from 'react-router-dom';
+
+import { CollectionContext } from '../App';
+
+const SearchResultsCard = (props) => {
+    const data = useContext(CollectionContext)
+    console.log(data)
     return (
         <div className='card-container'>
-            {data.data.map((option) => (
-                <Card className='card' key={option.index} value={option.carmake}>
-                    <CardMedia
-                        component="img"
-                        alt="CAR IMAGE"
-                        height="140"
-                        image={option.image}
-                    />
-                    <CardContent>
-                        <Typography gutterBottom variant="h4" component="div">
-                            {option.carmake} {option.name}
+            {props.cars.slice(0,20).map((car) => (
+                <Card className='card' raised='true' key={car.id} value={car.CarMake}>
+                    <CardActionArea>
+                        <Link to={'/car-info/' + car.id}>
+                            <CardMedia
+                                component="img"
+                                alt="CAR IMAGE"
+                                height="180"
+                                image={car.Image}
+                            />
+                        </Link>
+                    </CardActionArea>
+                    <CardContent className='card-content'>
+                        <Typography className='card-title' variant="h4">
+                            {car.Name}
                         </Typography>
-                        <Typography variant="h5" color="text.secondary">
-                            ${option.price}
+                        <Typography className='card-info' variant="h5" color="text.secondary" p='30px'>
+                            Price: ${car.Price}
+                        </Typography>
+                        <Typography className='card-info' variant="h5" color="text.secondary" p='30px'>
+                            Miles: {car.Miles}
                         </Typography>
                     </CardContent>
-                    <CardActions>
-                        <Button size="small">Share</Button>
-                        <a href={option.link}>
-                        <Button size="small">Learn More</Button>
+                    <CardActions className='actions'>
+                        <a href={car.Link}>
+                            <Button size="small">Go to site</Button>
                         </a>
                     </CardActions>
                 </Card>
-            ))}
+            )
+            )}
         </div>
     );
 };
 
-export default SearchResultCard;
+export default SearchResultsCard;

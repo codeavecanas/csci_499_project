@@ -1,211 +1,176 @@
-import React, { useState } from "react";
+import React, { useEffect, useState, useContext, createContext } from "react";
 import "../styles/SearchField.css";
 
+// Firebase imports
+import { collection, query, where, getDocs } from "firebase/firestore";
+
+// MUI imports
 import TextField from '@mui/material/TextField';
 import MenuItem from '@mui/material/MenuItem';
 import Slider from '@mui/material/Slider';
 import Box from '@mui/material/Box';
+import Button from '@mui/material/Button'
+import { CollectionContext } from "../App";
 
-const carMakes = [
-    {
-        value: 'Ford',
-        label: 'Ford',
-    },
-    {
-        value: 'Honda',
-        label: 'Honda',
-    },
-    {
-        value: 'Nissan',
-        label: 'Nissan',
+import { useNavigate } from "react-router";
+import SearchResultsBody from "./SearchResultsBody";
+
+// Create Context for results from search bar input
+export const SearchResultsContext = createContext()
+
+const SearchField = (props) => {
+    // Initialize state
+    const [search, setSearch] = useState('')
+    const [value, setValue] = useState([])
+
+    const navigate = useNavigate();
+
+    // Set collectionRef to Collection Context from ./App
+    const collectionRef = useContext(CollectionContext)
+
+    // Query through Manucturers to match car with user input
+    function findCar() {
+        const q = query(collectionRef, where("Manufacturer", "==", search));
+
+        const getQuerySnapshot = async () => {
+            const querySnapshot = await getDocs(q);
+            const answer = querySnapshot.forEach((doc) => {
+                // doc.data() is never undefined for query doc snapshots
+                console.log("QUERY:", doc.id, " => ", doc.data());
+            });
+            if (querySnapshot.size != 0) {
+                navigate("/search-results/", {
+                    state: {
+                        search: search
+                    }
+                })
+            }
+        };
+        getQuerySnapshot();
     }
-];
 
-const carModels = [
-    {
-      value: 'Mustang',
-      label: 'Mustang',
-    },
-    {
-      value: 'Fusion',
-      label: 'Fusion',
-    },
-];
+    // MENU OPTION CLICK
+    const handleClick = (e) => {
+        setValue(e.target.value)
+        console.log(value)
+    }
 
-const carMiles = [
-    {
-      value: 'Low',
-      label: '0-50,000',
-    },
-    {
-      value: 'Medium',
-      label: '50,000 - 90,000',
-    },
-    {
-      value: 'High',
-      label: '100,000+',
-    },
-];
+    // Variable to check for duplicates of Manufacturers
+    const manuDuplicateCheck = []
+    const yearDuplicateCheck = []
 
-const carYears = [
-    {
-      value: '2020',
-      label: '2020',
-    },
-    {
-      value: '2021',
-      label: '2021',
-    },
-    {
-      value: '2022',
-      label: '2022',
-    },
-];
-
-const carPrices= [
-    {
-        value: '100',
-        label: '100'
-    },
-];
-
-
-function SearchField() {
-
-    // Set state
-    const [carMake, setCarMake] = useState('');
-    const [carModel, setCarModel] = useState('');
-    const [carMile, setCarMiles] = useState('');
-    const [carYear, setCarYear] = useState('');
-    const [carPrice, setCarPrice] = useState('');
-    const [priceSlider, setPriceSlider] = useState([0, 100]);
-
-
-    // Change state of carMake
-    const handleMakeChange = (event) => {
-        setCarMake(event.target.value);
-    };
-
-    // Change state of carModel
-    const handleModelChange = (event) => {
-        setCarModel(event.target.value);
-    };
-
-    // Change state of carModel
-    const handleMilesChange = (event) => {
-        setCarMiles(event.target.value);
-    };
-
-    // Change state of carYear
-    const handleYearChange = (event) => {
-        setCarYear(event.target.value);
-    };
-
-    // Change state of carYear
-    const handlePriceChange = (event) => {
-        setCarPrice(event.target.value);
-    };
-
-    // Change state of carYear
-    const handlePriceSliderChange = (event) => {
-        setPriceSlider(event.target.value);
-    };
+    // Sort manufacturer names in aphabetical order
+    props.cars.sort((a,b) => a.Name.localeCompare(b.Name))
+    //console.log("CARS ARRAY:", props.cars)
 
     return (
         <div className="selection-area">
             <div className="selectors">
-                {/*Make of car selection*/}
+                <div className="search-bar">
+                    <input type="search" placeholder="Search for car" onChange={event => setSearch(event.target.value)}></input>
+                    <Button onClick={() => findCar()} variant="contained">SEARCH</Button>
+                </div>
+
+
+                {/***** Manufacturer of car selector *****/}
                 <TextField
                     id="make"  
                     select
                     label="Make"
-                    value={carMake}
-                    onChange={handleMakeChange}
-                    helperText="Manufacturer"
+                    //value={value}
+                    //onChange={(e) => setValue(e.target.value)}
+                    helperText="Make"
                     prop sx={{width: 120}}
                 >
-                    {carMakes.map((option) => (
-                        <MenuItem key={option.value} value={option.value}>
-                            {option.label}
-                        </MenuItem>
-                    ))}
+                    <div className="options">
+                        {props.cars.map((car) => {
+                            // Check for duplicates in Manufacturer
+                            if (manuDuplicateCheck.includes(car.Manufacturer)) {
+                                return null;
+                            }
+                            manuDuplicateCheck.push(car.Manufacturer);
+                            
+                            // Render option for each manufacturer in array
+                            return (
+                                <MenuItem className='menu-item' key={car.id}>
+                                    {car.Manufacturer}
+                                </MenuItem>
+                            )
+                        })}
+                    </div>
                 </TextField>
-
-                {/*Model of car selection*/}
+                        
+                {/***** Model of car selector *****/}
                 <TextField
-                    id="model"
+                    id="model"  
                     select
                     label="Model"
-                    value={carModel}
-                    onChange={handleModelChange}
-                    helperText="Car model"
-                    prop sx={{width: 100}}
+                    //value={carMake}
+                    //onChange={//handleMakeChange}
+                    helperText="Model"
+                    prop sx={{width: 120}}
                 >
-                    {carModels.map((option) => (
-                        <MenuItem key={option.value} value={option.value}>
-                            {option.label}
-                        </MenuItem>
-                    ))}
+                    <div className="options">
+                        {props.cars.map((car) => {
+                            // Check for duplicates in Manufacturer
+                            if (manuDuplicateCheck.includes(car.Manufacturer)) {
+                                return null;
+                            }
+                            manuDuplicateCheck.push(car.Manufacturer);
+                            
+                            // Render card for each car in array
+                            return (
+                                <MenuItem className='menu-item' key={car.id}>
+                                    {car.Manufacturer}
+                                </MenuItem>
+                            )
+                        })}
+                    </div>
                 </TextField>
+                
 
-                {/*Miles of car selection*/}
-                <TextField
-                    id="miles"
-                    select
-                    label="Miles"
-                    value={carMile}
-                    onChange={handleMilesChange}
-                    helperText="Miles"
-                    prop sx={{width: 100}}
-                >
-                    {carMiles.map((option) => (
-                        <MenuItem key={option.value} value={option.value}>
-                            {option.label}
-                        </MenuItem>
-                    ))}
-                </TextField>
 
-                {/*Year of car selection*/}
+                {/***** Year of car selector *****/}
                 <TextField
-                    id="year"
+                    id="year"  
                     select
                     label="Year"
-                    value={carYear}
-                    onChange={handleYearChange}
+                    //value={carMake}
+                    //onChange={//handleMakeChange}
                     helperText="Year"
-                    prop sx={{width: 100}}
+                    prop sx={{width: 120}}
                 >
-                    {carYears.map((option) => (
-                        <MenuItem key={option.value} value={option.value}>
-                            {option.label}
-                        </MenuItem>
-                    ))}
+                    <div className="options">
+                        {props.cars.map((car) => {
+                            // Check for duplicates in Manufacturer
+                            if (yearDuplicateCheck.includes(car.Year)) {
+                                return null;
+                            }
+                            yearDuplicateCheck.push(car.Year);
+                            
+                            // Render card for each car in array
+                            return (
+                                <MenuItem className='menu-item' key={car.id}>
+                                    {car.Year}
+                                </MenuItem>
+                            )
+                        })}
+                    </div>
                 </TextField>
 
-                {/*Price of car selection*/}
+
+
+                {/***** Price of car selector *****/}
                 <TextField
-                    id="price"
+                    id="price"  
                     select
                     label="Price"
-                    value={carPrice}
-                    onChange={handlePriceChange}
+                    //value={carMake}
+                    //onChange={//handleMakeChange}
                     helperText="Price"
-                    prop sx={{width: 100}}
+                    prop sx={{width: 120}}
                 >
-                    {/*PRICE SLIDER*/}
-                    <div className="slider-container">
-                        <h4 id='h4'>PRICE RANGE</h4>
-                        <div className='priceInputField'>
-                            <input className='minPrice' type="text" placeholder="$0"></input>
-                            <input className='maxPrice' type="text" placeholder="$100,000"></input>
-                        </div>
-                        <div className='slider'>
-                            <Slider
-                                size="small"
-                                defaultValue={0}
-                            />
-                        </div>
-                    </div>
+                    <Slider></Slider>
                 </TextField>
             </div>
         </div>

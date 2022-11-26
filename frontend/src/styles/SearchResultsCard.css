@@ -1,14 +1,35 @@
-.card {
-    width: 250px;
-    padding: 30px;
-    margin: 30px;
-}
-
 .card-container {
-    margin-top: 30px;
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
-    background-color: #EEEEEE;
-    justify-content: space-between;
+    background-color: whitesmoke;
+    justify-content: space-around;
+}
+
+.card {
+    height: 500px;
+    width: 300px;
+    margin: 30px;
+    position: relative;
+}
+
+.card-title {
+    overflow: hidden;
+    text-align: center;
+    min-height: 100px;
+    max-height: 200px;
+}
+
+
+
+.actions {
+    border-top: 1px solid lightblue;
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    justify-content: center;
+}
+
+.page-selector {
+    display: flex;
 }

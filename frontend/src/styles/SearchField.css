@@ -1,14 +1,22 @@
 .selection-area {
     display: flex;
     width: 100%;
-    border-radius: 5px;
+}
+
+.menu-item {
+    text-transform: lowercase;
 }
 
 .selectors {
     width: 100%;
     display: flex;
-    justify-content: space-between;
     padding-top: 10px;
+}
+
+.options {
+    width: 500px;
+    display: flex;
+    flex-wrap: wrap;
 }
 
 #make, #model, #miles, #year, #price {
@@ -36,3 +44,6 @@
     margin: 20px;
 }
 
+.search-button {
+    height: 50px;
+}
